@@ -1,9 +1,9 @@
 package com.managerTopicSubject.mts.controller;
 
 import com.managerTopicSubject.mts.dto.teacher.TeacherCreateRequestDTO;
-import com.managerTopicSubject.mts.dto.teacher.TeacherInfoRequestDTO;
-import com.managerTopicSubject.mts.dto.teacher.TeacherSearchRequestDTO;
-import com.managerTopicSubject.mts.dto.teacher.TeacherUpdateRequestDTO;
+import com.managerTopicSubject.mts.dto.teacher.TeacherInfoResponseDTO;
+import com.managerTopicSubject.mts.dto.teacher.TeacherSearchResponseDTO;
+import com.managerTopicSubject.mts.dto.teacher.TeacherUpdateDTO;
 import com.managerTopicSubject.mts.model.Teacher;
 import com.managerTopicSubject.mts.service.FunctionResourceServices;
 import com.managerTopicSubject.mts.service.TeacherResourceServices;
@@ -29,7 +29,7 @@ public class TeacherResourceAPI {
         JsonResponse jsonResponse = new JsonResponse();
         try{
             jsonResponse.putSuccess(true);
-            List<TeacherSearchRequestDTO> listResult = teacherResourceServices.search();
+            List<TeacherSearchResponseDTO> listResult = teacherResourceServices.search();
             jsonResponse.putResult(listResult);
             return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
         }catch (Exception e){
@@ -45,7 +45,7 @@ public class TeacherResourceAPI {
         try{
             JsonResponse jsonResponse = new JsonResponse();
             jsonResponse.putSuccess(true);
-            TeacherUpdateRequestDTO dto = teacherResourceServices.find(id);
+            TeacherUpdateDTO dto = teacherResourceServices.find(id);
             jsonResponse.putResult(dto);
             return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
         }catch (Exception e){
@@ -61,7 +61,7 @@ public class TeacherResourceAPI {
         try{
             JsonResponse jsonResponse = new JsonResponse();
             jsonResponse.putSuccess(true);
-            TeacherInfoRequestDTO dto = teacherResourceServices.info(id);
+            TeacherInfoResponseDTO dto = teacherResourceServices.info(id);
             jsonResponse.putResult(dto);
             return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
         }catch (Exception e){
@@ -89,7 +89,7 @@ public class TeacherResourceAPI {
     }
 
     @PostMapping("/teacher/{id}")
-    public ResponseEntity<JsonResponse> update(@RequestBody TeacherUpdateRequestDTO dto){
+    public ResponseEntity<JsonResponse> update(@RequestBody TeacherUpdateDTO dto){
         try{
             JsonResponse jsonResponse = new JsonResponse();
             jsonResponse.putSuccess(true);
@@ -104,7 +104,7 @@ public class TeacherResourceAPI {
         }
     }
 
-    @PostMapping("/teacher/{id}/delete")
+    @PostMapping("/api/teacher/{id}/delete")
     public ResponseEntity<JsonResponse> delete(@PathVariable Long id){
         try{
             JsonResponse jsonResponse = new JsonResponse();

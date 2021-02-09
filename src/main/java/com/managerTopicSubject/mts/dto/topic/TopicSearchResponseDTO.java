@@ -13,13 +13,15 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 @Data
 @NoArgsConstructor
-public class TopicSearchRequestDTO {
+@AllArgsConstructor
+public class TopicSearchResponseDTO {
 
     @Id
     private Long id;
@@ -27,7 +29,7 @@ public class TopicSearchRequestDTO {
     @NotNull @NotBlank @Size(min = 5, max = 100)
     private String name;
 
-    private List<String> teamList;
+    private List<String> teamNames;
 
     @NotNull @NotBlank
     private String startTime;
@@ -36,13 +38,10 @@ public class TopicSearchRequestDTO {
     private String endTime;
 
     @NotNull @NotBlank
-    private Map<String, Object> teacher;
+    private String teacherName;
 
-    public TopicSearchRequestDTO(@NotNull @NotBlank @Size(min = 5, max = 100) String name, List<String> teamList, @NotNull @NotBlank String startTime, @NotNull @NotBlank String endTime, @NotNull @NotBlank Map<String, Object> teacher) {
-        this.name = name;
-        this.teamList = teamList;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.teacher = teacher;
-    }
+    @NotNull @NotBlank
+    private String status;
+
+
 }

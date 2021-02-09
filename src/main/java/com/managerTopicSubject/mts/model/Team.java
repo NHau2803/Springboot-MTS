@@ -14,6 +14,7 @@ import javax.validation.constraints.Size;
 @Data
 @NoArgsConstructor
 public class Team {
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -27,6 +28,8 @@ public class Team {
 
     @Column(name = "link")
     private String link;
+
+    //file
 
     @Column(name = "point")
     private Float point;

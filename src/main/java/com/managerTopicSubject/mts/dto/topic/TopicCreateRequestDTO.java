@@ -1,6 +1,7 @@
 package com.managerTopicSubject.mts.dto.topic;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.managerTopicSubject.mts.model.Progress;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,8 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.Instant;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -23,13 +26,14 @@ public class TopicCreateRequestDTO {
     @NotNull @NotBlank @Size(min = 5, max = 100)
     private String name;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd-MM-yyyy HH:mm:ss")
+    @NotNull @NotBlank
     private String startTime;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd-MM-yyyy HH:mm:ss")
+    @NotNull @NotBlank
     private String endTime;
+
+    @Id
+    private Long facultyId;
 
     @Id
     private Long teacherId;
@@ -41,4 +45,7 @@ public class TopicCreateRequestDTO {
 
     @NotNull @NotBlank //format: [start_date**end_date**content, start_date**end_date**content,...]
     private String[] deadlines;
+
+//    @NotNull @NotBlank
+//    private List<Progress> progresses;
 }

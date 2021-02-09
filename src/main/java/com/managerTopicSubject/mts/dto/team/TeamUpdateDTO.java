@@ -11,7 +11,7 @@ import java.util.Map;
 
 @Data
 @NoArgsConstructor
-public class TeamUpdateRequestDTO {
+public class TeamUpdateDTO {
 
     @Id
     private Long id;
@@ -19,6 +19,9 @@ public class TeamUpdateRequestDTO {
     @NotNull @NotBlank @Size(min = 5, max = 50)
     private String name;
 
+    @Id
+    private Long topicId;
+
     @NotNull @NotBlank
-    private Map<String, Object> topicId;
+    private String topicName;
 }

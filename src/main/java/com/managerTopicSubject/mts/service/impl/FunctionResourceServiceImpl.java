@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,49 +30,7 @@ public class FunctionResourceServiceImpl implements FunctionResourceServices {
     @Autowired
     private ProgressRepository progressRepository;
 
-    @Transactional
-    @Override
-    public Date CovertStringToDate(String time) {
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-        java.util.Date date = null;
-        try {
-            date = format.parse(time);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        Date dateSql = new Date(date.getTime());
-        return dateSql;
-    }
 
-    @Transactional
-    @Override
-    public String CovertDateToString(Date time) {
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-        Date date = new Date(time.getTime());
-        String timeStr = format.format(date);
-        return timeStr;
-    }
-
-    @Override
-    public Date CovertStringToTime(String time) {
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        java.util.Date date = null;
-        try {
-            date = format.parse(time);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        Date dateSql = new Date(date.getTime());
-        return dateSql;
-    }
-
-    @Override
-    public String CovertTimeToString(Date time) {
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        Date date = new Date(time.getTime());
-        String timeStr = format.format(date);
-        return timeStr;
-    }
 
     @Transactional
     @Override
@@ -134,10 +95,10 @@ public class FunctionResourceServiceImpl implements FunctionResourceServices {
         Progress progress = new Progress();
         String[] deadlineDetails = deadline.split("\\*\\*");
         progress.setStartTime(
-                CovertStringToTime(deadlineDetails[0])
+                changeISOToInstant(deadlineDetails[0])
         );
         progress.setEndTime(
-                CovertStringToTime(deadlineDetails[1])
+                changeISOToInstant(deadlineDetails[1])
         );
         progress.setContent(deadlineDetails[2]);
         return progress;
@@ -151,10 +112,10 @@ public class FunctionResourceServiceImpl implements FunctionResourceServices {
         if (progressModel.isPresent()) {
             progressModel.get().setId(progressId);
             progressModel.get().setStartTime(
-                    CovertStringToTime(deadlineDetail[1])
+                    Instant.parse(deadlineDetail[1])
             );
             progressModel.get().setEndTime(
-                    CovertStringToTime(deadlineDetail[2])
+                    Instant.parse(deadlineDetail[2])
             );
             progressModel.get().setContent(deadlineDetail[3]);
 
@@ -164,12 +125,61 @@ public class FunctionResourceServiceImpl implements FunctionResourceServices {
         }
     }
 
-//    @Override
-//    public String changeStatus(StatusModel status) {
-//        if(StatusModel.isMember(status.name())){
-//
-//        }
-//    }
+    @Override
+    public String changeInstantToString(Instant i) {
+        LocalDateTime localDateTime = LocalDateTime.ofInstant( i , ZoneId.of("Asia/Saigon"));
+        return localDateTime.toString();
+    }
+
+    @Override
+    public Instant changeISOToInstant(String iso) {
+        return Instant.parse(iso);
+    }
+
+    @Transactional
+    @Override
+    public Date covertStringToDate(String time) {
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+        java.util.Date date = null;
+        try {
+            date = format.parse(time);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Date dateSql = new Date(date.getTime());
+        return dateSql;
+    }
+
+    @Transactional
+    @Override
+    public String covertDateToString(Date time) {
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+        Date date = new Date(time.getTime());
+        String timeStr = format.format(date);
+        return timeStr;
+    }
+
+    @Override
+    public Date covertStringToTime(String time) {
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        java.util.Date date = null;
+        try {
+            date = format.parse(time);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Date dateSql = new Date(date.getTime());
+        return dateSql;
+    }
+
+    @Override
+    public String covertTimeToString(Date time) {
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        Date date = new Date(time.getTime());
+        String timeStr = format.format(date);
+        return timeStr;
+    }
+
 
 
 }

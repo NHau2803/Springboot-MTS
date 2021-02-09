@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.time.Instant;
 import java.util.Date;
 
 @Entity
@@ -21,10 +24,8 @@ public class StudentTeam {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd-MM-yyyy HH:mm:ss")
-    @Column(name="time_join", nullable = false)
-    private Date timeJoin;
+    @Column(name = "time_join", nullable = false)
+    private Instant timeJoin;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "student_id", nullable = false)
@@ -34,7 +35,7 @@ public class StudentTeam {
     @JoinColumn(name = "team_id", nullable = false)
     private Team team;
 
-    public StudentTeam(Date timeJoin, Student student, Team team) {
+    public StudentTeam(Instant timeJoin, Student student, Team team) {
         this.timeJoin = timeJoin;
         this.student = student;
         this.team = team;

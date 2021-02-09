@@ -1,7 +1,7 @@
 package com.managerTopicSubject.mts.service;
 
 import com.managerTopicSubject.mts.dto.topic.TopicCreateRequestDTO;
-import com.managerTopicSubject.mts.dto.topic.TopicSearchRequestDTO;
+import com.managerTopicSubject.mts.dto.topic.TopicSearchResponseDTO;
 import com.managerTopicSubject.mts.dto.topic.TopicUpdateRequestDTO;
 import com.managerTopicSubject.mts.model.Topic;
 
@@ -17,7 +17,7 @@ public interface TopicResourceServices {
 
     Boolean delete(Long id);
 
-    List<TopicSearchRequestDTO> search();
+    List<TopicSearchResponseDTO> search();
 
 
 }

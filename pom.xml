@@ -64,6 +64,13 @@
 			<version>6.0.13.Final</version>
 		</dependency>
 
+<!--		&lt;!&ndash; For Java 8 Date/Time &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>com.fasterxml.jackson.datatype</groupId>-->
+<!--			<artifactId>jackson-datatype-jsr310</artifactId>-->
+<!--		</dependency>-->
+
+
 
 	</dependencies>
 

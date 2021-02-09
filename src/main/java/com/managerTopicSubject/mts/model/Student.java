@@ -9,6 +9,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.Instant;
 import java.util.Date;
 
 @Entity
@@ -33,10 +34,8 @@ public class Student {
     @Column(name = "gender", nullable = false)
     private GenderModel gender;
 
-    @Temporal(TemporalType.DATE)
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd-MM-yyyy")
     @Column(name = "birthday", nullable = false)
-    private Date birthday;
+    private Instant birthday;
 
     @Email @NotNull @NotBlank @Size(min = 10, max = 50)
     @Column(name = "email", unique = true, nullable = false)
@@ -54,7 +53,7 @@ public class Student {
     @JoinColumn(name = "user_id", unique = true, nullable = false)
     private User user;
 
-    public Student(@NotNull @NotBlank @Size(min = 10, max = 20) String code, @NotNull @NotBlank @Size(min = 5, max = 50) String name, GenderModel gender, Date birthday, @Email @NotNull @NotBlank @Size(min = 10, max = 50) String email, @NotNull @NotBlank @Size(min = 10, max = 15) String phone, Faculty faculty, User user) {
+    public Student(@NotNull @NotBlank @Size(min = 10, max = 20) String code, @NotNull @NotBlank @Size(min = 5, max = 50) String name, GenderModel gender, Instant birthday, @Email @NotNull @NotBlank @Size(min = 10, max = 50) String email, @NotNull @NotBlank @Size(min = 10, max = 15) String phone, Faculty faculty, User user) {
         this.code = code;
         this.name = name;
         this.gender = gender;

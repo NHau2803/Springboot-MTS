@@ -1,9 +1,6 @@
 package com.managerTopicSubject.mts.controller;
 
-import com.managerTopicSubject.mts.dto.team.JoinTeamRequestDTO;
-import com.managerTopicSubject.mts.dto.team.TeamCreateRequestDTO;
-import com.managerTopicSubject.mts.dto.team.TeamSearchRequestDTO;
-import com.managerTopicSubject.mts.dto.team.TeamUpdateRequestDTO;
+import com.managerTopicSubject.mts.dto.team.*;
 import com.managerTopicSubject.mts.model.Team;
 import com.managerTopicSubject.mts.service.TeamResourceServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +35,7 @@ public class TeamResourceAPI {
     }
 
     @PostMapping("/team/{id}")
-    public ResponseEntity<JsonResponse> update(@RequestBody TeamUpdateRequestDTO dto){
+    public ResponseEntity<JsonResponse> update(@RequestBody TeamUpdateDTO dto){
         try{
             JsonResponse jsonResponse = new JsonResponse();
             jsonResponse.putSuccess(true);
@@ -74,7 +71,23 @@ public class TeamResourceAPI {
         try{
             JsonResponse jsonResponse = new JsonResponse();
             jsonResponse.putSuccess(true);
-            List<TeamSearchRequestDTO> listResult = teamResourceServices.search();
+            List<TeamSearchResponseDTO> listResult = teamResourceServices.search();
+            jsonResponse.putResult(listResult);
+            return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+        }catch (Exception e){
+            JsonResponse jsonResponse = new JsonResponse();
+            jsonResponse.putSuccess(false);
+            jsonResponse.put("message", "There is an error during...");
+            return new ResponseEntity<JsonResponse>(jsonResponse, HttpStatus.OK);
+        }
+    }
+
+    @GetMapping("/team/search/{id}")
+    public ResponseEntity<JsonResponse> searchByTopicId(@PathVariable Long id){
+        try{
+            JsonResponse jsonResponse = new JsonResponse();
+            jsonResponse.putSuccess(true);
+            List<TeamSearchResponseDTO> listResult = teamResourceServices.searchByTopicId(id);
             jsonResponse.putResult(listResult);
             return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
         }catch (Exception e){
@@ -90,7 +103,24 @@ public class TeamResourceAPI {
         try{
             JsonResponse jsonResponse = new JsonResponse();
             jsonResponse.putSuccess(true);
-            TeamUpdateRequestDTO dto = teamResourceServices.find(id);
+            TeamUpdateDTO dto = teamResourceServices.find(id);
+            jsonResponse.putResult(dto);
+            return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+        }catch (Exception e){
+            JsonResponse jsonResponse = new JsonResponse();
+            jsonResponse.putSuccess(false);
+            jsonResponse.put("message", "There is an error during...");
+            return new ResponseEntity<JsonResponse>(jsonResponse, HttpStatus.OK);
+        }
+    }
+
+
+    @GetMapping("/team/{id}/view")
+    public ResponseEntity<JsonResponse> view(@PathVariable Long id){
+        try{
+            JsonResponse jsonResponse = new JsonResponse();
+            jsonResponse.putSuccess(true);
+            ViewTeamResponseDTO dto = teamResourceServices.viewTeam(id);
             jsonResponse.putResult(dto);
             return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
         }catch (Exception e){

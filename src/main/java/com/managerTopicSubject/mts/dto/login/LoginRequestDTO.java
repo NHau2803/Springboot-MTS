@@ -11,11 +11,11 @@ import javax.validation.constraints.Size;
 public class LoginRequestDTO {
 
     @NotBlank
-    @Size(min=10, max = 50)
+    @Size(min=8, max = 50)
     private String username;
 
     @NotBlank
-    @Size(min=10, max = 50)
+    @Size(min=8, max = 50)
     private String password;
 
 }

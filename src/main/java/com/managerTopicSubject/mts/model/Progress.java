@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
 import java.util.Date;
 
 
@@ -18,15 +19,11 @@ public class Progress {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd-MM-yyyy HH:mm:ss")
     @Column(name = "start_time", nullable = false)
-    private Date startTime;
+    private Instant startTime;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd-MM-yyyy HH:mm:ss")
     @Column(name = "end_time", nullable = false)
-    private Date endTime;
+    private Instant endTime;
 
     @NotNull @NotBlank
     @Column(name = "content")
@@ -36,7 +33,7 @@ public class Progress {
     @JoinColumn(name = "topic_id", nullable = false)
     private Topic topic;
 
-    public Progress(Date startTime, Date endTime, @NotNull @NotBlank String content, Topic topic) {
+    public Progress(@NotNull @NotBlank Instant startTime, @NotNull @NotBlank Instant endTime, @NotNull @NotBlank String content, Topic topic) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.content = content;

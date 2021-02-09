@@ -1,6 +1,5 @@
 package com.managerTopicSubject.mts.model;
 
-import com.managerTopicSubject.mts.model.baseModel.BaseForListModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

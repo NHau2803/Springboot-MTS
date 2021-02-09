@@ -1,5 +1,6 @@
-package com.managerTopicSubject.mts.dto.teacher;
+package com.managerTopicSubject.mts.dto.student;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,27 +12,26 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class TeacherSearchRequestDTO {
+@AllArgsConstructor
+public class StudentSearchResponseDTO {
+
     @Id
     private Long id;
 
     @NotNull @NotBlank @Size(min = 10, max = 20)
     private String code;
 
-    @NotNull @NotBlank @Size(min = 5, max = 200)
+    @NotNull @NotBlank @Size(min = 5, max = 50)
     private String name;
 
     @NotNull @NotBlank @Size(min = 5, max = 50)
-    private String academyName;
-
-    @NotNull @NotBlank @Size(min = 5, max = 50)
-    private String positionName;
-
-    @NotNull @NotBlank @Size(min = 5, max = 50)
     private String facultyName;
+
+    private List<String> teamNames;
 
     private List<String> topicNames;
 
     @NotNull @NotBlank
     private String status;
+
 }

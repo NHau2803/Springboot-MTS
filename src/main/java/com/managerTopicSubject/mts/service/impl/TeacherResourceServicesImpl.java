@@ -1,9 +1,9 @@
 package com.managerTopicSubject.mts.service.impl;
 
 import com.managerTopicSubject.mts.dto.teacher.TeacherCreateRequestDTO;
-import com.managerTopicSubject.mts.dto.teacher.TeacherInfoRequestDTO;
-import com.managerTopicSubject.mts.dto.teacher.TeacherSearchRequestDTO;
-import com.managerTopicSubject.mts.dto.teacher.TeacherUpdateRequestDTO;
+import com.managerTopicSubject.mts.dto.teacher.TeacherInfoResponseDTO;
+import com.managerTopicSubject.mts.dto.teacher.TeacherSearchResponseDTO;
+import com.managerTopicSubject.mts.dto.teacher.TeacherUpdateDTO;
 import com.managerTopicSubject.mts.model.*;
 import com.managerTopicSubject.mts.model.enumModel.RoleNameModel;
 import com.managerTopicSubject.mts.model.enumModel.StatusModel;
@@ -11,6 +11,7 @@ import com.managerTopicSubject.mts.repository.*;
 import com.managerTopicSubject.mts.service.FunctionResourceServices;
 import com.managerTopicSubject.mts.service.TeacherResourceServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -19,6 +20,8 @@ import java.util.*;
 @Service
 public class TeacherResourceServicesImpl implements TeacherResourceServices {
 
+    @Autowired
+    PasswordEncoder encoder;
     @Autowired
     private FunctionResourceServices functionResourceServices;
     @Autowired
@@ -44,26 +47,26 @@ public class TeacherResourceServicesImpl implements TeacherResourceServices {
              functionResourceServices.changeGender(dto.getGender())
         );
         teacher.setBirthday(
-                functionResourceServices.CovertStringToDate(dto.getBirthday())
+                functionResourceServices.changeISOToInstant(dto.getBirthday())
         );
         teacher.setEmail(dto.getEmail());
         teacher.setPhone(dto.getPhone());
-        Optional<Academy> academyModel = academyRepository.findById(dto.getAcademyId());
-        if(academyModel.isPresent()){
-            teacher.setAcademy(academyModel.get());
+        Optional<Academy> academy = academyRepository.findById(dto.getAcademyId());
+        if(academy.isPresent()){
+            teacher.setAcademy(academy.get());
         }
-        Optional<Position> positionModel = positionRepository.findById(dto.getPositionId());
-        if(positionModel.isPresent()){
-            teacher.setPosition(positionModel.get());
+        Optional<Position> position = positionRepository.findById(dto.getPositionId());
+        if(position.isPresent()){
+            teacher.setPosition(position.get());
         }
-        Optional<Faculty> facultyModel = facultyRepository.findById(dto.getFacultyId());
-        if(facultyModel.isPresent()){
-            teacher.setFaculty(facultyModel.get());
+        Optional<Faculty> faculty = facultyRepository.findById(dto.getFacultyId());
+        if(faculty.isPresent()){
+            teacher.setFaculty(faculty.get());
         }
         /********************************************************************************************/
         User user = new User();
         user.setUsername(dto.getUsername());
-        user.setPassword(dto.getPassword());
+        user.setPassword(encoder.encode(dto.getPassword()));
         user.setStatus(StatusModel.ACTIVE);
         user.setRoles(
                 functionResourceServices.changeRoles(RoleNameModel.TEACHER.name())
@@ -78,11 +81,11 @@ public class TeacherResourceServicesImpl implements TeacherResourceServices {
 
     @Override
     @Transactional
-    public List<TeacherSearchRequestDTO> search() {
+    public List<TeacherSearchResponseDTO> search() {
         List<Teacher> teacherList = teacherRepository.findAll();
-        List<TeacherSearchRequestDTO> listResult = new ArrayList<>();
+        List<TeacherSearchResponseDTO> listResult = new ArrayList<>();
         for(Teacher teacher : teacherList){
-            TeacherSearchRequestDTO dto = new TeacherSearchRequestDTO();
+            TeacherSearchResponseDTO dto = new TeacherSearchResponseDTO();
             dto.setId(teacher.getId());
             dto.setCode(teacher.getCode());
             dto.setName(teacher.getName());
@@ -104,45 +107,46 @@ public class TeacherResourceServicesImpl implements TeacherResourceServices {
 
     @Override
     @Transactional
-    public Teacher update(TeacherUpdateRequestDTO dto) {
-        Optional<Teacher> teacherModelResult = teacherRepository.findById(dto.getId());
-        if(!teacherModelResult.isPresent()){
+    public Teacher update(TeacherUpdateDTO dto) {
+        Optional<Teacher> teacherResult = teacherRepository.findById(dto.getId());
+        if(!teacherResult.isPresent()){
             return null;
         }
-        Teacher teacherUpdate = teacherModelResult.get();
+        Teacher teacherUpdate = teacherResult.get();
         teacherUpdate.setCode(dto.getCode());
         teacherUpdate.setName(dto.getName());
         teacherUpdate.setGender(
                 functionResourceServices.changeGender(dto.getGender())
         );
         teacherUpdate.setBirthday(
-                functionResourceServices.CovertStringToDate(dto.getBirthday())
+                functionResourceServices.changeISOToInstant(dto.getBirthday())
         );
         teacherUpdate.setEmail(dto.getEmail());
         teacherUpdate.setPhone(dto.getPhone());
 
-        Map<String, Object> map = dto.getMap();
-        Long academyId = ((Number) map.get("academyId")).longValue();
-        Long positionId = ((Number) map.get("positionId")).longValue();
-        Long facultyId = ((Number) map.get("facultyId")).longValue();
+//        Map<String, Object> map = dto.getMap();
+//        Long academyId = ((Number) map.get("academyId")).longValue();
+//        Long positionId = ((Number) map.get("positionId")).longValue();
+//        Long facultyId = ((Number) map.get("facultyId")).longValue();
 
-        Optional<Academy> academyModel = academyRepository.findById(facultyId);
-        if(academyModel.isPresent()){
-            teacherUpdate.setAcademy(academyModel.get());
+        Optional<Academy> academy = academyRepository.findById(dto.getAcademyId());
+        if(academy.isPresent()){
+            teacherUpdate.setAcademy(academy.get());
         }
-        Optional<Position> positionModel = positionRepository.findById(positionId);
-        if(positionModel.isPresent()){
-            teacherUpdate.setPosition(positionModel.get());
+        Optional<Position> position = positionRepository.findById(dto.getPositionId());
+        if(position.isPresent()){
+            teacherUpdate.setPosition(position.get());
         }
-        Optional<Faculty> facultyModel = facultyRepository.findById(facultyId);
-        if(facultyModel.isPresent()){
-            teacherUpdate.setFaculty(facultyModel.get());
+        Optional<Faculty> faculty = facultyRepository.findById(dto.getFacultyId());
+        if(faculty.isPresent()){
+            teacherUpdate.setFaculty(faculty.get());
         }
-        /********************************************************************************************/
 
-        teacherUpdate.getUser().setRoles(
-                functionResourceServices.changeRoles(dto.getRoles())
-        );
+//        /********************************************************************************************/
+//        teacherUpdate.getUser().setRoles(
+//                functionResourceServices.changeRoles(dto.getRoles())
+//        );
+
         teacherRepository.save(teacherUpdate);
         return teacherUpdate;
 
@@ -150,50 +154,55 @@ public class TeacherResourceServicesImpl implements TeacherResourceServices {
 
     @Override
     @Transactional
-    public TeacherUpdateRequestDTO find(Long id) {
-        Optional<Teacher> teacherModelResult = teacherRepository.findById(id);
-        if(!teacherModelResult.isPresent()){
-            return null;
-        }
-        Teacher teacher = teacherModelResult.get();
-        TeacherUpdateRequestDTO dto = new TeacherUpdateRequestDTO();
-        dto.setId(teacher.getId());
-        dto.setCode(teacher.getCode());
-        dto.setName(teacher.getName());
-        dto.setGender(teacher.getGender().name());
-        dto.setBirthday(
-                functionResourceServices.CovertDateToString(teacher.getBirthday())
-        );
-        dto.setEmail(teacher.getEmail());
-        dto.setPhone(teacher.getPhone());
-        Map<String, Object> map = new HashMap<>();
-        map.put("academyId", teacher.getAcademy().getId());
-        map.put("academyName", teacher.getAcademy().getName());
-        map.put("positionId", teacher.getPosition().getId());
-        map.put("positionNam", teacher.getPosition().getName());
-        map.put("facultyId", teacher.getFaculty().getId());
-        map.put("facultyName", teacher.getFaculty().getName());
-        dto.setMap(map);
-        dto.setRoles(
-                functionResourceServices.changeRoles(teacher.getUser().getRoles())
-        );
-        return dto;
-    }
-
-    @Override
-    @Transactional
-    public TeacherInfoRequestDTO info(Long id) {
+    public TeacherUpdateDTO find(Long id) {
         Optional<Teacher> teacherResult = teacherRepository.findById(id);
         if(!teacherResult.isPresent()){
             return null;
         }
         Teacher teacher = teacherResult.get();
-        TeacherInfoRequestDTO dto = new TeacherInfoRequestDTO();
+        TeacherUpdateDTO dto = new TeacherUpdateDTO();
+        dto.setId(teacher.getId());
         dto.setCode(teacher.getCode());
         dto.setName(teacher.getName());
         dto.setGender(teacher.getGender().name());
         dto.setBirthday(
-                functionResourceServices.CovertDateToString(teacher.getBirthday())
+                functionResourceServices.changeInstantToString(teacher.getBirthday())
+        );
+        dto.setEmail(teacher.getEmail());
+        dto.setPhone(teacher.getPhone());
+
+        dto.setAcademyId(teacher.getAcademy().getId());
+        dto.setPositionId(teacher.getPosition().getId());
+        dto.setFacultyId(teacher.getFaculty().getId());
+
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("academyId", teacher.getAcademy().getId());
+//        map.put("academyName", teacher.getAcademy().getName());
+//        map.put("positionId", teacher.getPosition().getId());
+//        map.put("positionNam", teacher.getPosition().getName());
+//        map.put("facultyId", teacher.getFaculty().getId());
+//        map.put("facultyName", teacher.getFaculty().getName());
+//        dto.setMap(map);
+//        dto.setRoles(
+//                functionResourceServices.changeRoles(teacher.getUser().getRoles())
+//        );
+        return dto;
+    }
+
+    @Override
+    @Transactional
+    public TeacherInfoResponseDTO info(Long id) {
+        Optional<Teacher> teacherResult = teacherRepository.findById(id);
+        if(!teacherResult.isPresent()){
+            return null;
+        }
+        Teacher teacher = teacherResult.get();
+        TeacherInfoResponseDTO dto = new TeacherInfoResponseDTO();
+        dto.setCode(teacher.getCode());
+        dto.setName(teacher.getName());
+        dto.setGender(teacher.getGender().name());
+        dto.setBirthday(
+                functionResourceServices.changeInstantToString(teacher.getBirthday())
         );
         dto.setEmail(teacher.getEmail());
         dto.setPhone(teacher.getPhone());

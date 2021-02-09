@@ -1,9 +1,9 @@
 package com.managerTopicSubject.mts.service.impl;
 
 import com.managerTopicSubject.mts.dto.student.StudentCreateRequestDTO;
-import com.managerTopicSubject.mts.dto.student.StudentInfoRequestDTO;
-import com.managerTopicSubject.mts.dto.student.StudentSearchRequestDTO;
-import com.managerTopicSubject.mts.dto.student.StudentUpdateRequestDTO;
+import com.managerTopicSubject.mts.dto.student.StudentInfoResponseDTO;
+import com.managerTopicSubject.mts.dto.student.StudentSearchResponseDTO;
+import com.managerTopicSubject.mts.dto.student.StudentUpdateDTO;
 import com.managerTopicSubject.mts.model.*;
 import com.managerTopicSubject.mts.model.enumModel.RoleNameModel;
 import com.managerTopicSubject.mts.model.enumModel.StatusModel;
@@ -40,6 +40,8 @@ public class StudentResourceServicesImpl implements StudentResourceServices {
     @Autowired
     private RoleRepository roleRepository;
 
+
+    //bug! save user not save student
     @Override
     @Transactional
     public Student create(StudentCreateRequestDTO dto) {
@@ -50,7 +52,7 @@ public class StudentResourceServicesImpl implements StudentResourceServices {
                functionResourceServices.changeGender(dto.getGender())
         );
         student.setBirthday(
-                functionResourceServices.CovertStringToDate(dto.getBirthday())
+                functionResourceServices.changeISOToInstant(dto.getBirthday())
         );
         student.setEmail(dto.getEmail());
         student.setPhone(dto.getPhone());
@@ -76,11 +78,11 @@ public class StudentResourceServicesImpl implements StudentResourceServices {
 
     @Override
     @Transactional
-    public List<StudentSearchRequestDTO> search() {
+    public List<StudentSearchResponseDTO> search() {
         List<Student> studentList = studentRepository.findAll();
-        List<StudentSearchRequestDTO> listResult = new ArrayList<>();
+        List<StudentSearchResponseDTO> listResult = new ArrayList<>();
         for(Student student : studentList){
-            StudentSearchRequestDTO dto = new StudentSearchRequestDTO();
+            StudentSearchResponseDTO dto = new StudentSearchResponseDTO();
             dto.setId(student.getId());
             dto.setCode(student.getCode());
             dto.setName(student.getName());
@@ -103,31 +105,39 @@ public class StudentResourceServicesImpl implements StudentResourceServices {
 
     @Override
     @Transactional
-    public Student update(StudentUpdateRequestDTO dto) {
-        Optional<Student> studentModelResult = studentRepository.findById(dto.getId());
-        if(!studentModelResult.isPresent()) {
+    public Student update(StudentUpdateDTO dto) {
+        Optional<Student> studentResult = studentRepository.findById(dto.getId());
+        if(!studentResult.isPresent()) {
             return null;
         }
-        Student studentUpdate = studentModelResult.get();
+        Student studentUpdate = studentResult.get();
         studentUpdate.setCode(dto.getCode());
         studentUpdate.setName(dto.getName());
         studentUpdate.setGender(
                 functionResourceServices.changeGender(dto.getGender())
         );
-        studentUpdate.setBirthday(dto.getBirthday());
+        studentUpdate.setBirthday(
+                functionResourceServices.changeISOToInstant(dto.getBirthday())
+        );
         studentUpdate.setEmail(dto.getEmail());
         studentUpdate.setPhone(dto.getPhone());
-
-        Map<String, Object> faculty = dto.getFaculty();
-        Long facultyId = ((Number) faculty.get("facultyId")).longValue();
-        Optional<Faculty> facultyModel = facultyRepository.findById(facultyId);
-        if(facultyModel.isPresent()){
-            studentUpdate.setFaculty(facultyModel.get());
+        Optional<Faculty> faculty = facultyRepository.findById(dto.getFacultyId());
+        if(faculty.isPresent()){
+            studentUpdate.setFaculty(faculty.get());
         }
-        /********************************************************************************************/
-        studentUpdate.getUser().setRoles(
-                functionResourceServices.changeRoles(dto.getRoles())
-        );
+
+//        Map<String, Object> faculty = dto.getFaculty();
+//        Long facultyId = ((Number) faculty.get("facultyId")).longValue();
+//        Optional<Faculty> facultyModel = facultyRepository.findById(facultyId);
+//        if(facultyModel.isPresent()){
+//            studentUpdate.setFaculty(facultyModel.get());
+//        }
+//
+//        /********************************************************************************************/
+//        studentUpdate.getUser().setRoles(
+//                functionResourceServices.changeRoles(dto.getRoles())
+//        );
+
         studentRepository.save(studentUpdate);
         return studentUpdate;
 
@@ -135,44 +145,48 @@ public class StudentResourceServicesImpl implements StudentResourceServices {
 
     @Override
     @Transactional
-    public StudentUpdateRequestDTO find(Long id) {
-        Optional<Student> studentModelResult = studentRepository.findById(id);
-        if(!studentModelResult.isPresent()){
-            return null;
-        }
-        Student student = studentModelResult.get();
-        StudentUpdateRequestDTO dto = new StudentUpdateRequestDTO();
-        dto.setId(student.getId());
-        dto.setCode(student.getCode());
-        dto.setName(student.getName());
-        dto.setGender(student.getGender().name());
-        dto.setBirthday(student.getBirthday());
-        dto.setEmail(student.getEmail());
-        dto.setPhone(student.getPhone());
-        Map<String, Object> faculty = new HashMap<>();
-        faculty.put("facultyId", student.getFaculty().getId());
-        faculty.put("facultyName", student.getFaculty().getName());
-        dto.setFaculty(faculty);
-        dto.setRoles(
-                functionResourceServices.changeRoles(student.getUser().getRoles())
-        );
-        return dto;
-    }
-
-    @Override
-    @Transactional
-    public StudentInfoRequestDTO info(Long id) {
+    public StudentUpdateDTO find(Long id) {
         Optional<Student> studentResult = studentRepository.findById(id);
         if(!studentResult.isPresent()){
             return null;
         }
         Student student = studentResult.get();
-        StudentInfoRequestDTO dto = new StudentInfoRequestDTO();
+        StudentUpdateDTO dto = new StudentUpdateDTO();
+        dto.setId(student.getId());
         dto.setCode(student.getCode());
         dto.setName(student.getName());
         dto.setGender(student.getGender().name());
         dto.setBirthday(
-                functionResourceServices.CovertDateToString(student.getBirthday())
+                functionResourceServices.changeInstantToString(student.getBirthday())
+        );
+        dto.setEmail(student.getEmail());
+        dto.setPhone(student.getPhone());
+        dto.setFacultyId(student.getFaculty().getId());
+//        Map<String, Object> faculty = new HashMap<>();
+//        faculty.put("facultyId", student.getFaculty().getId());
+//        faculty.put("facultyName", student.getFaculty().getName());
+//
+//        dto.setFaculty(faculty);
+//        dto.setRoles(
+//                functionResourceServices.changeRoles(student.getUser().getRoles())
+//        );
+        return dto;
+    }
+
+    @Override
+    @Transactional
+    public StudentInfoResponseDTO info(Long id) {
+        Optional<Student> studentResult = studentRepository.findById(id);
+        if(!studentResult.isPresent()){
+            return null;
+        }
+        Student student = studentResult.get();
+        StudentInfoResponseDTO dto = new StudentInfoResponseDTO();
+        dto.setCode(student.getCode());
+        dto.setName(student.getName());
+        dto.setGender(student.getGender().name());
+        dto.setBirthday(
+                functionResourceServices.changeInstantToString(student.getBirthday())
         );
         dto.setEmail(student.getEmail());
         dto.setPhone(student.getPhone());

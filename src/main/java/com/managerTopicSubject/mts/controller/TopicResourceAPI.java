@@ -1,7 +1,7 @@
 package com.managerTopicSubject.mts.controller;
 
 import com.managerTopicSubject.mts.dto.topic.TopicCreateRequestDTO;
-import com.managerTopicSubject.mts.dto.topic.TopicSearchRequestDTO;
+import com.managerTopicSubject.mts.dto.topic.TopicSearchResponseDTO;
 import com.managerTopicSubject.mts.dto.topic.TopicUpdateRequestDTO;
 import com.managerTopicSubject.mts.model.Topic;
 import com.managerTopicSubject.mts.service.TopicResourceServices;
@@ -27,12 +27,12 @@ public class TopicResourceAPI {
             jsonResponse.putSuccess(true);
             Topic topic = topicResourceServices.create(dto);
             jsonResponse.putResult(topic);
-            return new ResponseEntity<JsonResponse>(jsonResponse, HttpStatus.OK);
+            return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
         } catch (Exception e) {
             JsonResponse jsonResponse = new JsonResponse();
             jsonResponse.putSuccess(false);
             jsonResponse.put("message", "There is an error during...");
-            return new ResponseEntity<JsonResponse>(jsonResponse, HttpStatus.OK);
+            return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
         }
     }
 
@@ -48,7 +48,7 @@ public class TopicResourceAPI {
             JsonResponse jsonResponse = new JsonResponse();
             jsonResponse.putSuccess(false);
             jsonResponse.put("message", "There is an error during...");
-            return new ResponseEntity<JsonResponse>(jsonResponse, HttpStatus.OK);
+            return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
         }
     }
 
@@ -57,8 +57,40 @@ public class TopicResourceAPI {
         try{
             JsonResponse jsonResponse = new JsonResponse();
             jsonResponse.putSuccess(true);
-            List<TopicSearchRequestDTO> listResult = topicResourceServices.search();
+            List<TopicSearchResponseDTO> listResult = topicResourceServices.search();
             jsonResponse.putResult(listResult);
+            return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+        }catch (Exception e){
+            JsonResponse jsonResponse = new JsonResponse();
+            jsonResponse.putSuccess(false);
+            jsonResponse.put("message", "There is an error during...");
+            return new ResponseEntity<JsonResponse>(jsonResponse, HttpStatus.OK);
+        }
+    }
+
+    @GetMapping("/topic/{id}")
+    public ResponseEntity<JsonResponse> find(@PathVariable Long id){
+        try{
+            JsonResponse jsonResponse = new JsonResponse();
+            jsonResponse.putSuccess(true);
+            TopicUpdateRequestDTO dto = topicResourceServices.find(id);
+            jsonResponse.putResult(dto);
+            return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+        }catch (Exception e){
+            JsonResponse jsonResponse = new JsonResponse();
+            jsonResponse.putSuccess(false);
+            jsonResponse.put("message", "There is an error during...");
+            return new ResponseEntity<JsonResponse>(jsonResponse, HttpStatus.OK);
+        }
+    }
+
+    @PostMapping("/api/topic/{id}/delete")
+    public ResponseEntity<JsonResponse> delete(@PathVariable Long id){
+        try{
+            JsonResponse jsonResponse = new JsonResponse();
+            jsonResponse.putSuccess(true);
+            Boolean delete = topicResourceServices.delete(id);
+            jsonResponse.putResult(delete);
             return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
         }catch (Exception e){
             JsonResponse jsonResponse = new JsonResponse();
