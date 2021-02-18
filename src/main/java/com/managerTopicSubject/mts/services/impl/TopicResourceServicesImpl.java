@@ -1,4 +1,4 @@
-package com.managerTopicSubject.mts.service.impl;
+package com.managerTopicSubject.mts.services.impl;
 
 import com.managerTopicSubject.mts.dto.topic.*;
 import com.managerTopicSubject.mts.model.*;
@@ -6,8 +6,8 @@ import com.managerTopicSubject.mts.model.enumModel.StatusModel;
 import com.managerTopicSubject.mts.model.midLevel.StudentTeam;
 import com.managerTopicSubject.mts.repository.*;
 import com.managerTopicSubject.mts.repository.midLevel.StudentTeamRepository;
-import com.managerTopicSubject.mts.service.FunctionResourceServices;
-import com.managerTopicSubject.mts.service.TopicResourceServices;
+import com.managerTopicSubject.mts.services.FunctionResourceServices;
+import com.managerTopicSubject.mts.services.TopicResourceServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

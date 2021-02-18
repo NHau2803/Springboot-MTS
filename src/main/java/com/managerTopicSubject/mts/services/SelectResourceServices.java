@@ -1,4 +1,4 @@
-package com.managerTopicSubject.mts.service;
+package com.managerTopicSubject.mts.services;
 
 import com.managerTopicSubject.mts.dto.select.TopicOfFacultyResponseDTO;
 import com.managerTopicSubject.mts.dto.select.SelectResponseDTO;

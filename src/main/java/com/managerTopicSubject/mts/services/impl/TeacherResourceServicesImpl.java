@@ -1,4 +1,4 @@
-package com.managerTopicSubject.mts.service.impl;
+package com.managerTopicSubject.mts.services.impl;
 
 import com.managerTopicSubject.mts.dto.teacher.TeacherCreateRequestDTO;
 import com.managerTopicSubject.mts.dto.teacher.TeacherInfoResponseDTO;
@@ -8,8 +8,8 @@ import com.managerTopicSubject.mts.model.*;
 import com.managerTopicSubject.mts.model.enumModel.RoleNameModel;
 import com.managerTopicSubject.mts.model.enumModel.StatusModel;
 import com.managerTopicSubject.mts.repository.*;
-import com.managerTopicSubject.mts.service.FunctionResourceServices;
-import com.managerTopicSubject.mts.service.TeacherResourceServices;
+import com.managerTopicSubject.mts.services.FunctionResourceServices;
+import com.managerTopicSubject.mts.services.TeacherResourceServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

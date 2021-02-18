@@ -1,7 +1,6 @@
-package com.managerTopicSubject.mts.service;
+package com.managerTopicSubject.mts.services;
 
 import com.managerTopicSubject.mts.dto.topic.DeadlineDTO;
-import com.managerTopicSubject.mts.dto.topic.DeadlineRequestDTO;
 import com.managerTopicSubject.mts.model.Progress;
 import com.managerTopicSubject.mts.model.Role;
 import com.managerTopicSubject.mts.model.enumModel.GenderModel;

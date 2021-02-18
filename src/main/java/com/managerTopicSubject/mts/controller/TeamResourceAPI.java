@@ -2,7 +2,7 @@ package com.managerTopicSubject.mts.controller;
 
 import com.managerTopicSubject.mts.dto.team.*;
 import com.managerTopicSubject.mts.model.Team;
-import com.managerTopicSubject.mts.service.TeamResourceServices;
+import com.managerTopicSubject.mts.services.TeamResourceServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

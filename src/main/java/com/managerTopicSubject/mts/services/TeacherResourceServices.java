@@ -1,4 +1,4 @@
-package com.managerTopicSubject.mts.service;
+package com.managerTopicSubject.mts.services;
 
 import com.managerTopicSubject.mts.dto.teacher.TeacherCreateRequestDTO;
 import com.managerTopicSubject.mts.dto.teacher.TeacherInfoResponseDTO;

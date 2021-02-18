@@ -35,5 +35,7 @@ public class ViewTeamResponseDTO {
 
     private List<Map<String, Object>> students;
 
+    private List<Map<String, Object>> deadlines;
+
 
 }

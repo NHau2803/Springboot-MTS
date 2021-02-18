@@ -1,4 +1,4 @@
-package com.managerTopicSubject.mts.service.impl;
+package com.managerTopicSubject.mts.services.impl;
 
 import com.managerTopicSubject.mts.dto.student.StudentCreateRequestDTO;
 import com.managerTopicSubject.mts.dto.student.StudentInfoResponseDTO;
@@ -13,8 +13,8 @@ import com.managerTopicSubject.mts.repository.RoleRepository;
 import com.managerTopicSubject.mts.repository.StudentRepository;
 import com.managerTopicSubject.mts.repository.UserRepository;
 import com.managerTopicSubject.mts.repository.midLevel.StudentTeamRepository;
-import com.managerTopicSubject.mts.service.FunctionResourceServices;
-import com.managerTopicSubject.mts.service.StudentResourceServices;
+import com.managerTopicSubject.mts.services.FunctionResourceServices;
+import com.managerTopicSubject.mts.services.StudentResourceServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

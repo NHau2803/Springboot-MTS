@@ -1,17 +1,19 @@
-package com.managerTopicSubject.mts.service.impl;
+package com.managerTopicSubject.mts.services.impl;
 
 import com.managerTopicSubject.mts.dto.team.*;
+import com.managerTopicSubject.mts.model.Progress;
 import com.managerTopicSubject.mts.model.Student;
 import com.managerTopicSubject.mts.model.Team;
 import com.managerTopicSubject.mts.model.Topic;
 import com.managerTopicSubject.mts.model.enumModel.StatusModel;
 import com.managerTopicSubject.mts.model.midLevel.StudentTeam;
+import com.managerTopicSubject.mts.repository.ProgressRepository;
 import com.managerTopicSubject.mts.repository.StudentRepository;
 import com.managerTopicSubject.mts.repository.TeamRepository;
 import com.managerTopicSubject.mts.repository.TopicRepository;
 import com.managerTopicSubject.mts.repository.midLevel.StudentTeamRepository;
-import com.managerTopicSubject.mts.service.FunctionResourceServices;
-import com.managerTopicSubject.mts.service.TeamResourceServices;
+import com.managerTopicSubject.mts.services.FunctionResourceServices;
+import com.managerTopicSubject.mts.services.TeamResourceServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +33,8 @@ public class TeamResourceServicesImpl implements TeamResourceServices {
     private FunctionResourceServices functionResourceServices;
     @Autowired
     private StudentTeamRepository studentTeamRepository;
+    @Autowired
+    private ProgressRepository progressRepository;
 
     @Override
     @Transactional
@@ -138,6 +142,7 @@ public class TeamResourceServicesImpl implements TeamResourceServices {
     }
 
     @Override
+    @Transactional
     public List<TeamSearchResponseDTO> searchByTopicId(Long id) {
         List<Team> teams = teamRepository.findByTopicId(id);
         List<TeamSearchResponseDTO> listResult = new ArrayList<>();
@@ -158,6 +163,7 @@ public class TeamResourceServicesImpl implements TeamResourceServices {
     }
 
     @Override
+    @Transactional
     public ViewTeamResponseDTO viewTeam(Long id) {
         Optional<Team> teamResult = teamRepository.findById(id);
         ViewTeamResponseDTO dto = new ViewTeamResponseDTO();
@@ -166,6 +172,7 @@ public class TeamResourceServicesImpl implements TeamResourceServices {
         dto.setStatus(teamResult.get().getStatus().name());
         dto.setLink(teamResult.get().getLink());
         dto.setPoint(teamResult.get().getPoint());
+        dto.setTopicName(teamResult.get().getTopic().getName());
 
         List<StudentTeam> studentTeams = studentTeamRepository.findByTeamId(id);
         List<Map<String, Object>> students = new ArrayList<>();
@@ -181,6 +188,27 @@ public class TeamResourceServicesImpl implements TeamResourceServices {
             students.add(map);
         }
         dto.setStudents(students);
+
+        count=1;
+        Long topicId = teamResult.get().getTopic().getId();
+        List<Progress> progresses = progressRepository.findByTopicId(topicId);
+        List<Map<String, Object>> deadlines = new ArrayList<>();
+        for(Progress progress : progresses){
+            Map<String, Object> map = new HashMap<>();
+            map.put("startDeadline",
+                    functionResourceServices.changeInstantToString(
+                            progress.getStartTime()
+                    ));
+            map.put("endDeadline",
+                    functionResourceServices.changeInstantToString(
+                            progress.getEndTime()
+                    ));
+            map.put("content", progress.getContent());
+            map.put("count", count++);
+            deadlines.add(map);
+        }
+        dto.setDeadlines(deadlines);
+
         return dto;
     }
 

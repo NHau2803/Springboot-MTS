@@ -1,10 +1,10 @@
-package com.managerTopicSubject.mts.service.impl;
+package com.managerTopicSubject.mts.services.impl;
 
 import com.managerTopicSubject.mts.dto.select.TopicOfFacultyResponseDTO;
 import com.managerTopicSubject.mts.dto.select.SelectResponseDTO;
 import com.managerTopicSubject.mts.model.*;
 import com.managerTopicSubject.mts.repository.*;
-import com.managerTopicSubject.mts.service.SelectResourceServices;
+import com.managerTopicSubject.mts.services.SelectResourceServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

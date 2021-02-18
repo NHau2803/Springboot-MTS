@@ -1,4 +1,4 @@
-package com.managerTopicSubject.mts.service.impl;
+package com.managerTopicSubject.mts.services.impl;
 
 import com.managerTopicSubject.mts.dto.topic.DeadlineDTO;
 import com.managerTopicSubject.mts.dto.topic.DeadlineRequestDTO;
@@ -9,7 +9,7 @@ import com.managerTopicSubject.mts.model.enumModel.RoleNameModel;
 import com.managerTopicSubject.mts.model.enumModel.StatusModel;
 import com.managerTopicSubject.mts.repository.ProgressRepository;
 import com.managerTopicSubject.mts.repository.RoleRepository;
-import com.managerTopicSubject.mts.service.FunctionResourceServices;
+import com.managerTopicSubject.mts.services.FunctionResourceServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

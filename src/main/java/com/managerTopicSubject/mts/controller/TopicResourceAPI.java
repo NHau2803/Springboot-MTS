@@ -4,7 +4,7 @@ import com.managerTopicSubject.mts.dto.topic.TopicCreateRequestDTO;
 import com.managerTopicSubject.mts.dto.topic.TopicSearchResponseDTO;
 import com.managerTopicSubject.mts.dto.topic.TopicUpdateRequestDTO;
 import com.managerTopicSubject.mts.model.Topic;
-import com.managerTopicSubject.mts.service.TopicResourceServices;
+import com.managerTopicSubject.mts.services.TopicResourceServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

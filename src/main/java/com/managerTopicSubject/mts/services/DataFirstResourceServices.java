@@ -1,4 +1,4 @@
-package com.managerTopicSubject.mts.service;
+package com.managerTopicSubject.mts.services;
 
 public interface DataFirstResourceServices {
 }

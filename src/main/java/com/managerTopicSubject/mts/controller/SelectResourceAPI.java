@@ -2,8 +2,7 @@ package com.managerTopicSubject.mts.controller;
 
 import com.managerTopicSubject.mts.dto.select.SelectResponseDTO;
 import com.managerTopicSubject.mts.dto.select.TopicOfFacultyResponseDTO;
-import com.managerTopicSubject.mts.dto.student.StudentSearchResponseDTO;
-import com.managerTopicSubject.mts.service.SelectResourceServices;
+import com.managerTopicSubject.mts.services.SelectResourceServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
