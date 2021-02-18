@@ -13,19 +13,21 @@ import java.time.Instant;
 
 @Data
 @NoArgsConstructor
-public class DeadlineResponseDTO {
+public class DeadlineDTO {
 
     @Id
     private Long id;
 
     @NotNull @NotBlank
-    private String startTime;
+    private String startDeadline;
 
     @NotNull @NotBlank
-    private String endTime;
+    private String endDeadline;
 
     @NotNull @NotBlank
     private String content;
+
+
 
 
 }

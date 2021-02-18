@@ -1,5 +1,7 @@
 package com.managerTopicSubject.mts.service.impl;
 
+import com.managerTopicSubject.mts.dto.topic.DeadlineDTO;
+import com.managerTopicSubject.mts.dto.topic.DeadlineRequestDTO;
 import com.managerTopicSubject.mts.model.Progress;
 import com.managerTopicSubject.mts.model.Role;
 import com.managerTopicSubject.mts.model.enumModel.GenderModel;
@@ -15,12 +17,9 @@ import javax.transaction.Transactional;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
+import java.util.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class FunctionResourceServiceImpl implements FunctionResourceServices {
@@ -180,6 +179,68 @@ public class FunctionResourceServiceImpl implements FunctionResourceServices {
         return timeStr;
     }
 
+
+    @Override
+    public Map<String, Object> HandleDeadlines(Long topicId, List<DeadlineDTO> dto) {
+
+        Map<String, Object> result = new HashMap<>();
+
+        Set<Long> progressIds = new HashSet<>();
+        Set<Long> dtoIds = new HashSet<>();
+
+        List<Progress> progressResult = progressRepository.findByTopicId(topicId);
+        for(Progress progress: progressResult) {
+            progressIds.add(progress.getId());
+        }
+
+        for(DeadlineDTO deadline : dto) {
+            dtoIds.add(deadline.getId());
+        }
+
+        Set<Long> updateProgressIds = new HashSet<>();
+        for(Long dtoId: dtoIds){
+            for(Long progressId: progressIds){
+                if(dtoId.equals(progressId)){
+                    updateProgressIds.add(dtoId);
+                }
+            }
+        }
+
+        //todo: id like => id need update
+        List<DeadlineDTO> deadlinesUpdate = new ArrayList<>();
+        for(DeadlineDTO deadline : dto) {
+            for(Long id : updateProgressIds){
+                if(deadline.getId().equals(id)){
+                    deadlinesUpdate.add(deadline);
+                }
+            }
+        }
+        result.put("deadlinesUpdate", deadlinesUpdate);
+
+        //todo: progress_id not update => id need delete
+        progressIds.removeAll(updateProgressIds);
+        result.put("deleteProgressIds", progressIds);
+
+        //todo: dto_id not update => create new a progress
+        List<DeadlineRequestDTO> deadlinesCreate = new ArrayList<>();
+        dtoIds.removeAll(updateProgressIds);
+        Set<Long> createProgressIds = dtoIds;
+
+        for(DeadlineDTO deadline : dto) {
+            for(Long id : createProgressIds){
+                if(deadline.getId().equals(id)){
+                    DeadlineRequestDTO deadlineRequestDTO = new DeadlineRequestDTO();
+                    deadlineRequestDTO.setStartDeadline(deadline.getStartDeadline());
+                    deadlineRequestDTO.setEndDeadline(deadline.getEndDeadline());
+                    deadlineRequestDTO.setContent(deadline.getContent());
+                    deadlinesCreate.add(deadlineRequestDTO);
+                }
+            }
+        }
+        result.put("deadlinesCreate", deadlinesCreate);
+
+        return result;
+    }
 
 
 }

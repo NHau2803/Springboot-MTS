@@ -43,9 +43,5 @@ public class TopicCreateRequestDTO {
 
     /********************************************************************************************/
 
-    @NotNull @NotBlank //format: [start_date**end_date**content, start_date**end_date**content,...]
-    private String[] deadlines;
-
-//    @NotNull @NotBlank
-//    private List<Progress> progresses;
+    private List<DeadlineRequestDTO> deadlines;
 }

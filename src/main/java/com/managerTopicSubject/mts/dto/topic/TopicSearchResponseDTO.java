@@ -41,6 +41,9 @@ public class TopicSearchResponseDTO {
     private String teacherName;
 
     @NotNull @NotBlank
+    private String facultyName;
+
+    @NotNull @NotBlank
     private String status;
 
 

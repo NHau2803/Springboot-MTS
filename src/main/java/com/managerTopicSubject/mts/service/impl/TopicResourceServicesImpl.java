@@ -3,7 +3,9 @@ package com.managerTopicSubject.mts.service.impl;
 import com.managerTopicSubject.mts.dto.topic.*;
 import com.managerTopicSubject.mts.model.*;
 import com.managerTopicSubject.mts.model.enumModel.StatusModel;
+import com.managerTopicSubject.mts.model.midLevel.StudentTeam;
 import com.managerTopicSubject.mts.repository.*;
+import com.managerTopicSubject.mts.repository.midLevel.StudentTeamRepository;
 import com.managerTopicSubject.mts.service.FunctionResourceServices;
 import com.managerTopicSubject.mts.service.TopicResourceServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,8 @@ public class TopicResourceServicesImpl implements TopicResourceServices {
     private TeamRepository teamRepository;
     @Autowired
     private FacultyRepository facultyRepository;
+    @Autowired
+    private StudentTeamRepository studentTeamRepository;
 
     @Override
     @Transactional
@@ -43,30 +47,33 @@ public class TopicResourceServicesImpl implements TopicResourceServices {
         topic.setEndTime(
                 functionResourceServices.changeISOToInstant(dto.getEndTime())
         );
-        Optional<Teacher> teacherModel = teacherRepository.findById(dto.getTeacherId());
-        if(teacherModel.isPresent()){
-            topic.setTeacher(teacherModel.get());
+        Optional<Teacher> teacher = teacherRepository.findById(dto.getTeacherId());
+        if(teacher.isPresent()){
+            topic.setTeacher(teacher.get());
         }
         Optional<Faculty> faculty = facultyRepository.findById(dto.getFacultyId());
         if(faculty.isPresent()){
             topic.setFaculty(faculty.get());
         }
-        Optional<TypeTopic> typeTopicModel = typeTopicRepository.findById(dto.getTypeTopicId());
-        if(typeTopicModel.isPresent()){
-            topic.setTypeTopic(typeTopicModel.get());
+        Optional<TypeTopic> typeTopic = typeTopicRepository.findById(dto.getTypeTopicId());
+        if(typeTopic.isPresent()){
+            topic.setTypeTopic(typeTopic.get());
         }
         Topic theTopic = topicRepository.save(topic);
         /********************************************************************************************/
 
-        try {
-            String[] deadlines = dto.getDeadlines();
-            for (String deadLine : deadlines) {
-                Progress progress = functionResourceServices.changeStringToProgressModel(deadLine);
-                progress.setTopic(theTopic);
-                progressRepository.save(progress);
-            }
-        }catch (Exception e){
-            System.out.println("Save progress error: "+e);
+        List<DeadlineRequestDTO> deadlines = dto.getDeadlines();
+        for(DeadlineRequestDTO deadline : deadlines){
+            Progress progress = new Progress();
+            progress.setTopic(theTopic);
+            progress.setStartTime(
+                    functionResourceServices.changeISOToInstant(deadline.getStartDeadline())
+            );
+            progress.setEndTime(
+                    functionResourceServices.changeISOToInstant(deadline.getEndDeadline())
+            );
+            progress.setContent(deadline.getContent());
+            progressRepository.save(progress);
         }
 
         return topic;
@@ -75,11 +82,11 @@ public class TopicResourceServicesImpl implements TopicResourceServices {
     @Override
     @Transactional
     public Topic update(TopicUpdateRequestDTO dto) {
-        Optional<Topic> topicModelResult = topicRepository.findById(dto.getId());
-        if(!topicModelResult.isPresent()){
+        Optional<Topic> topicResult = topicRepository.findById(dto.getId());
+        if(!topicResult.isPresent()){
             return null;
         }
-        Topic topicUpdate = topicModelResult.get();
+        Topic topicUpdate = topicResult.get();
         topicUpdate.setCode(dto.getCode());
         topicUpdate.setName(dto.getName());
         topicUpdate.setStartTime(
@@ -89,13 +96,13 @@ public class TopicResourceServicesImpl implements TopicResourceServices {
                 functionResourceServices.changeISOToInstant(dto.getEndTime())
         );
 
-        Optional<Teacher> teacherModel = teacherRepository.findById(dto.getTeacherId());
-        if (teacherModel.isPresent()) {
-            topicUpdate.setTeacher(teacherModel.get());
+        Optional<Teacher> teacher = teacherRepository.findById(dto.getTeacherId());
+        if (teacher.isPresent()) {
+            topicUpdate.setTeacher(teacher.get());
         }
-        Optional<TypeTopic> typeTopicModel = typeTopicRepository.findById(dto.getTypeTopicId());
-        if (typeTopicModel.isPresent()) {
-            topicUpdate.setTypeTopic(typeTopicModel.get());
+        Optional<TypeTopic> typeTopic = typeTopicRepository.findById(dto.getTypeTopicId());
+        if (typeTopic.isPresent()) {
+            topicUpdate.setTypeTopic(typeTopic.get());
         }
         Optional<Faculty> faculty = facultyRepository.findById(dto.getFacultyId());
         if (faculty.isPresent()) {
@@ -104,32 +111,50 @@ public class TopicResourceServicesImpl implements TopicResourceServices {
 
         Topic theTopic = topicRepository.save(topicUpdate);
         /********************************************************************************************/
-        List<DeadlineResponseDTO> deadlines = dto.getDeadlines();
-        for(DeadlineResponseDTO deadline : deadlines){
+
+
+        Map<String, Object> deadlines = functionResourceServices.HandleDeadlines(
+                topicUpdate.getId(), dto.getDeadlines());
+
+
+        List<DeadlineDTO> deadlinesUpdate = (List<DeadlineDTO>) deadlines.get("deadlinesUpdate");
+        for(DeadlineDTO deadlineUpdate : deadlinesUpdate){
             Progress progress = new Progress();
-            progress.setId(deadline.getId());
+            progress.setId(deadlineUpdate.getId());
             progress.setStartTime(
-                    functionResourceServices.changeISOToInstant(deadline.getStartTime())
+                    functionResourceServices.changeISOToInstant(deadlineUpdate.getStartDeadline())
             );
             progress.setEndTime(
-                    functionResourceServices.changeISOToInstant(deadline.getEndTime())
+                    functionResourceServices.changeISOToInstant(deadlineUpdate.getEndDeadline())
+            );
+            progress.setContent(deadlineUpdate.getContent());
+            progress.setTopic(theTopic);
+            progressRepository.save(progress);
+        }
+
+
+        Set<Long> deleteProgressIds = (Set<Long>) deadlines.get("deleteProgressIds");
+        for (Long id : deleteProgressIds){
+            Optional<Progress> progressResults = progressRepository.findById(id);
+            if(progressResults.isPresent()){
+                progressRepository.delete(progressResults.get());
+            }
+        }
+
+        List<DeadlineRequestDTO> deadlinesCreate = (List<DeadlineRequestDTO>) deadlines.get("deadlinesCreate");
+        for(DeadlineRequestDTO deadline : deadlinesCreate){
+            Progress progress = new Progress();
+            progress.setStartTime(
+                    functionResourceServices.changeISOToInstant(deadline.getStartDeadline())
+            );
+            progress.setEndTime(
+                    functionResourceServices.changeISOToInstant(deadline.getEndDeadline())
             );
             progress.setContent(deadline.getContent());
             progress.setTopic(theTopic);
             progressRepository.save(progress);
         }
 
-
-//        try {
-//            String[] deadlines = dto.getDeadlines();
-//            for (String deadLine : deadlines) {
-//                Progress progress = functionResourceServices.changeStringToProgressModelUpdate(deadLine);
-//                progress.setTopic(theTopic);
-//                progressRepository.save(progress);
-//            }
-//        } catch (Exception e) {
-//            System.out.println("Save progress error: " + e);
-//        }
         return topicUpdate;
 
     }
@@ -156,14 +181,14 @@ public class TopicResourceServicesImpl implements TopicResourceServices {
         dto.setTeacherId(topic.getTeacher().getId());
         dto.setTypeTopicId(topic.getTypeTopic().getId());
         List<Progress> progresses = progressRepository.findByTopicId(topic.getId());
-        List<DeadlineResponseDTO> deadlines = new ArrayList<>();
+        List<DeadlineDTO> deadlines = new ArrayList<>();
         for(Progress progress : progresses){
-            DeadlineResponseDTO deadline = new DeadlineResponseDTO();
+            DeadlineDTO deadline = new DeadlineDTO();
             deadline.setId(progress.getId());
-            deadline.setStartTime(
+            deadline.setStartDeadline(
                     functionResourceServices.changeInstantToString(progress.getStartTime())
             );
-            deadline.setEndTime(
+            deadline.setEndDeadline(
                     functionResourceServices.changeInstantToString(progress.getEndTime())
             );
             deadline.setContent(progress.getContent());
@@ -202,6 +227,44 @@ public class TopicResourceServicesImpl implements TopicResourceServices {
             dto.setEndTime(
                     functionResourceServices.changeInstantToString(topic.getEndTime())
             );
+            dto.setFacultyName(topic.getFaculty().getName());
+//            Map<String, Object> teacher = new HashMap<>();
+//            teacher.put("teacherId", topic.getTeacher().getId());
+//            teacher.put("teacherName", topic.getTeacher().getName());
+            dto.setTeacherName(topic.getTeacher().getName());
+            /********************************************************************************************/
+            List<Team> teams = teamRepository.findByTopicId(topic.getId());
+            List<String> teamNames = new ArrayList<>();
+            for(Team team : teams){
+                teamNames.add(team.getName());
+            }
+            dto.setTeamNames(teamNames);
+            dto.setStatus(topic.getStatus().name());
+            listResult.add(dto);
+        }
+        return listResult;
+    }
+
+    @Override
+    public List<TopicSearchResponseDTO> searchByStudentId(Long id) {
+        List<StudentTeam> studentTeams = studentTeamRepository.findByStudentId(id);
+        List<Topic> topicList = new ArrayList<>();
+        for(StudentTeam studentTeam : studentTeams){
+            topicList.add(studentTeam.getTeam().getTopic());
+        }
+
+        List<TopicSearchResponseDTO> listResult = new ArrayList<>();
+        for(Topic topic : topicList){
+            TopicSearchResponseDTO dto = new TopicSearchResponseDTO();
+            dto.setId(topic.getId());
+            dto.setName(topic.getName());
+            dto.setStartTime(
+                    functionResourceServices.changeInstantToString(topic.getStartTime())
+            );
+            dto.setEndTime(
+                    functionResourceServices.changeInstantToString(topic.getEndTime())
+            );
+            dto.setFacultyName(topic.getFaculty().getName());
 //            Map<String, Object> teacher = new HashMap<>();
 //            teacher.put("teacherId", topic.getTeacher().getId());
 //            teacher.put("teacherName", topic.getTeacher().getName());

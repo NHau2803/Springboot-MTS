@@ -67,6 +67,21 @@ public class TopicResourceAPI {
             return new ResponseEntity<JsonResponse>(jsonResponse, HttpStatus.OK);
         }
     }
+    @GetMapping("/topic/search/{id}")
+    public ResponseEntity<JsonResponse> searchByStudentId(@PathVariable Long id){
+        try{
+            JsonResponse jsonResponse = new JsonResponse();
+            jsonResponse.putSuccess(true);
+            List<TopicSearchResponseDTO> listResult = topicResourceServices.searchByStudentId(id);
+            jsonResponse.putResult(listResult);
+            return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+        }catch (Exception e){
+            JsonResponse jsonResponse = new JsonResponse();
+            jsonResponse.putSuccess(false);
+            jsonResponse.put("message", "There is an error during...");
+            return new ResponseEntity<JsonResponse>(jsonResponse, HttpStatus.OK);
+        }
+    }
 
     @GetMapping("/topic/{id}")
     public ResponseEntity<JsonResponse> find(@PathVariable Long id){

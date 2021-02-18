@@ -19,5 +19,7 @@ public interface TopicResourceServices {
 
     List<TopicSearchResponseDTO> search();
 
+    List<TopicSearchResponseDTO> searchByStudentId(Long id);
+
 
 }

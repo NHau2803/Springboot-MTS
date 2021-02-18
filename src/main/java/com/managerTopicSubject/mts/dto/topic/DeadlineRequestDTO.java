@@ -12,10 +12,10 @@ import javax.validation.constraints.NotNull;
 public class DeadlineRequestDTO {
 
     @NotNull @NotBlank
-    private String startTime;
+    private String startDeadline;
 
     @NotNull @NotBlank
-    private String endTime;
+    private String endDeadline;
 
     @NotNull @NotBlank
     private String content;
