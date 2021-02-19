@@ -142,6 +142,18 @@ public class TeamResourceServicesImpl implements TeamResourceServices {
     }
 
     @Override
+    public Boolean submitLink(SubmitRequestDTO dto) {
+        Optional<Team> teamResult = teamRepository.findById(dto.getId());
+        if(!teamResult.isPresent()){
+            return false;
+        }
+        Team team = teamResult.get();
+        team.setLink(dto.getLink());
+        teamRepository.save(team);
+        return true;
+    }
+
+    @Override
     @Transactional
     public List<TeamSearchResponseDTO> searchByTopicId(Long id) {
         List<Team> teams = teamRepository.findByTopicId(id);

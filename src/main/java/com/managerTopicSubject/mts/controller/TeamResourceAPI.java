@@ -147,5 +147,21 @@ public class TeamResourceAPI {
         }
     }
 
+    @PostMapping("/team/{id}/submit")
+    public ResponseEntity<JsonResponse> submitLink(@RequestBody SubmitRequestDTO dto){
+        try{
+            JsonResponse jsonResponse = new JsonResponse();
+            jsonResponse.putSuccess(true);
+            Boolean submitLink = teamResourceServices.submitLink(dto);
+            jsonResponse.putResult(submitLink);
+            return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+        }catch (Exception e){
+            JsonResponse jsonResponse = new JsonResponse();
+            jsonResponse.putSuccess(false);
+            jsonResponse.put("message", "There is an error during...");
+            return new ResponseEntity<JsonResponse>(jsonResponse, HttpStatus.OK);
+        }
+    }
+
 
 }

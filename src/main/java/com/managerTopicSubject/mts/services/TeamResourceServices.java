@@ -13,6 +13,7 @@ public interface TeamResourceServices {
     TeamUpdateDTO find(Long id);
     Team update(TeamUpdateDTO dto);
     Boolean delete(Long id);
+    Boolean submitLink(SubmitRequestDTO dto);
     List<TeamSearchResponseDTO> searchByTopicId(Long id);
     ViewTeamResponseDTO viewTeam(Long id);
 
